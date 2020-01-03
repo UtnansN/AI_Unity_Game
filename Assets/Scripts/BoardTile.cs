@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace DefaultNamespace
@@ -13,21 +14,11 @@ namespace DefaultNamespace
         private static Sprite _compBaseSprite;
         private static Sprite _compUpgSprite;
         
-        private enum Team
-        {
-            Human,
-            Cpu,
-            None
-        }
-
-        private enum State
-        {
-            Base,
-            Upgraded
-        }
-
-        private Team _team = Team.None;
-        private State _state = State.Base;
+        
+        [HideInInspector]
+        public Team team = Team.None;
+        [HideInInspector]
+        public TileState tileState = TileState.Base;
 
         [HideInInspector] public int row = 0;
         [HideInInspector] public int column = 0;
@@ -43,19 +34,34 @@ namespace DefaultNamespace
         public void MarkTile(bool playerClick)
         {
             var image = GetComponent<Image>();
-            if (playerClick)
+
+            if (team == Team.None)
             {
-                image.sprite = _playerBaseSprite;
-                _team = Team.Human;
+                if (playerClick)
+                {
+                    image.sprite = _playerBaseSprite;
+                    team = Team.Human;
+                }
+                else
+                {
+                    image.sprite = _compBaseSprite;
+                    team = Team.Cpu;
+                }
             }
             else
             {
-                image.sprite = _compBaseSprite;
-                _team = Team.Cpu;
+                if (playerClick)
+                {
+                    image.sprite = _playerUpgSprite;
+                    tileState = TileState.Upgraded;
+                }
+                else
+                {
+                    image.sprite = _compUpgSprite;
+                    tileState = TileState.Upgraded;
+                }
             }
-
-            var btn = GetComponent<Button>();
-            btn.enabled = false;
+            
         }
         
     }

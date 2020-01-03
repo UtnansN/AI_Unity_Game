@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using DefaultNamespace;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class Board : MonoBehaviour
@@ -10,17 +10,18 @@ public class Board : MonoBehaviour
     public int size = 6;
     public GameObject tilePrefab;
     
-    private GameObject[,] _tiles;
+    [HideInInspector]
+    public GameObject[,] tiles;
 
     public void InitBoard()
     {
-        if (_tiles != null)
+        if (tiles != null)
         {
             CleanUpPrevious();
         }
         
-        _tiles = new GameObject[size,size];
-        
+        tiles = new GameObject[size,size];
+
         for (int i = 0; i < size; i++)
         {
             for (int j = 0; j < size; j++)
@@ -32,8 +33,8 @@ public class Board : MonoBehaviour
                 tileComponent.row = i;
                 tileComponent.column = j;
                 
-                gameTile.GetComponent<Button>().onClick.AddListener(() => { tileComponent.MarkTile(true); });
-                _tiles[i, j] = gameTile;
+                gameTile.GetComponent<Button>().onClick.AddListener(() => { GameManager.Instance.PerformPlacement(tileComponent.row, tileComponent.column, true); });
+                tiles[i, j] = gameTile;
             }
         }
     }
@@ -44,9 +45,45 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < size; j++)
             {
-                Destroy(_tiles[i, j]);
+                Destroy(tiles[i, j]);
             }
         }
     }
 
+    public void DisableTiles()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                tiles[i, j].GetComponent<Button>().enabled = false;
+            }
+        }
+    }
+
+    public void EnableClickableTiles()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            for (int j = 0; j < size; j++)
+            {
+                var boardTile = tiles[i, j].GetComponent<BoardTile>();
+                if (boardTile.team == Team.Human && boardTile.tileState == TileState.Base)
+                {
+                    tiles[i, j].GetComponent<Button>().enabled = true;
+                }
+            }
+        }
+    }
+    
+    public BoardTile FetchTile(int x, int y)
+    {
+        return tiles[x, y].GetComponent<BoardTile>();
+    }
+
+    public void ShiftTiles(MovementDirection direction)
+    {
+        // TODO
+    }
+    
 }

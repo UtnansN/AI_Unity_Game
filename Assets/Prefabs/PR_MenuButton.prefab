@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 3720236510881245010}
   - component: {fileID: 3720236510881245011}
   m_Layer: 5
-  m_Name: MenuButton
+  m_Name: PR_MenuButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -179,7 +179,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.8018868, g: 0.8018868, b: 0.8018868, a: 1}
     m_PressedColor: {r: 0.6037736, g: 0.6037736, b: 0.6037736, a: 1}
     m_SelectedColor: {r: 0.9254902, g: 0.9254902, b: 0.9254902, a: 1}
-    m_DisabledColor: {r: 0.99607843, g: 0.84705883, b: 0.09803922, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 0, b: 0.17621136, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:

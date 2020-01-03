@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditorInternal;
+﻿using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,12 +16,12 @@ public class StateTextHandler : MonoBehaviour
     {
         phaseText.GetComponent<Text>().text = PlacementText;
         humanCounter.GetComponent<Text>().text = "0";
-        humanCounter.GetComponent<Text>().text = "0";
+        cpuCounter.GetComponent<Text>().text = "0";
     }
 
     public void AdjustState()
     {
-        phaseText.text = GameManager.GameState == GameManager.State.Placement ? PlacementText : MovementText;
+        phaseText.text = GameManager.Instance.gameGameState == GameState.Placement ? PlacementText : MovementText;
     }
 
 }
