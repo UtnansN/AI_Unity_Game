@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using DefaultNamespace;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 
@@ -18,11 +16,12 @@ public class GameManager : MonoBehaviour
 
     public Board board;
     public StateTextHandler stateTextHandler;
+    public ShiftButtonHandler shiftButtonHandler;
     public Toggle humanToggle;
     public CpuPlayer aiPlayer;
-    
+
     [HideInInspector]
-    public GameState gameGameState = GameState.Placement;
+    public GameState gameState = GameState.Placement;
 
     void Start()
     {
@@ -30,15 +29,14 @@ public class GameManager : MonoBehaviour
         ResetGame();
     }
 
-    private void ResetGame()
+    public void ResetGame()
     {
         board.InitBoard();
-        stateTextHandler.SetDefaultStateText();
-        gameGameState = GameState.Placement;
+        SetPhase(GameState.Placement);
+        stateTextHandler.SetDefaultPoints();
         aiPlayer.GenerateGameTree(!humanToggle.isOn);
     }
 
-    
     public void PerformPlacement(int x, int y, bool isHuman)
     {
         BoardTile tile = board.FetchTile(x, y);
@@ -46,7 +44,7 @@ public class GameManager : MonoBehaviour
         if (isHuman)
         {
             aiPlayer.Notify(x, y);
-            NextPhase();
+            SetPhase(GameState.Movement);
         }
     }
 
@@ -57,20 +55,22 @@ public class GameManager : MonoBehaviour
         {
             aiPlayer.Notify(direction);
         }
-        NextPhase();
+        SetPhase(GameState.Placement);
     }
 
-    private void NextPhase()
+    private void SetPhase(GameState state)
     {
-        if (gameGameState == GameState.Placement)
+        if (state == GameState.Movement)
         {
-            gameGameState = GameState.Movement;
+            gameState = GameState.Movement;
             board.DisableTiles();
+            shiftButtonHandler.EnableMoveButtons();
         }
         else
         {
-            gameGameState = GameState.Placement;
+            gameState = GameState.Placement;
             board.EnableClickableTiles();
+            shiftButtonHandler.DisableMoveButtons();
         }
         stateTextHandler.AdjustState();
     }

@@ -68,7 +68,7 @@ public class Board : MonoBehaviour
             for (int j = 0; j < size; j++)
             {
                 var boardTile = tiles[i, j].GetComponent<BoardTile>();
-                if (boardTile.team == Team.Human && boardTile.tileState == TileState.Base)
+                if ((boardTile.team == Team.Human && boardTile.tileState == TileState.Base) || boardTile.team == Team.None)
                 {
                     tiles[i, j].GetComponent<Button>().enabled = true;
                 }

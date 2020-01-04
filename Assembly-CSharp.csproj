@@ -58,9 +58,9 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Board.cs" />
      <Compile Include="Assets\Scripts\BoardTile.cs" />
-     <Compile Include="Assets\Scripts\ButtonListenerAdder.cs" />
      <Compile Include="Assets\Scripts\CpuPlayer.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\ShiftButtonHandler.cs" />
      <Compile Include="Assets\Scripts\StateTextHandler.cs" />
      <Compile Include="Assets\Scripts\TreeNode.cs" />
      <Compile Include="Assets\Scripts\Utils.cs" />
