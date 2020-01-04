@@ -81,9 +81,192 @@ public class Board : MonoBehaviour
         return tiles[x, y].GetComponent<BoardTile>();
     }
 
-    public void ShiftTiles(MovementDirection direction)
+    public void ApplyTileProp(TileProp[,] tileProps)
     {
-        // TODO
+        for (var i = 0; i < size; i++)
+        {
+            for (var j = 0; j < size; j++)
+            {
+                var current = FetchTile(i, j);
+                current.team = tileProps[i, j].Team;
+                current.tileState = tileProps[i, j].State;
+            }
+        }
     }
-    
+
+    public TileProp[,] ToTileProp()
+    {
+        var boardSize = size;
+        var tileProps = new TileProp[boardSize, boardSize];
+        for (var i = 0; i < boardSize; i++)
+        {
+            for (var j = 0; j < boardSize; j++)
+            {
+                var boardTile = tiles[i, j].GetComponent<BoardTile>();
+                tileProps[i, j] = new TileProp(boardTile.team, boardTile.tileState);
+            }
+        }
+        return tileProps;
+    }
+
+    public static TileProp[,] ShiftTiles(MovementDirection direction, TileProp[,] tileProps)
+    {
+        switch (direction)
+        {
+            case MovementDirection.Up:
+                return ShiftUp(tileProps);
+            case MovementDirection.Down:
+                return ShiftDown(tileProps);
+            case MovementDirection.Left:
+                return ShiftLeft(tileProps);
+            case MovementDirection.Right:
+                return ShiftRight(tileProps);
+            default:
+                throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
+        }
+    }
+
+    private static TileProp[,] ShiftUp(TileProp[,] tileProps)
+    {
+        var size = GameManager.Instance.board.size;
+        // Column movement up
+        for (var j = 0; j < size; j++)
+        {
+            var lastFreeIndex = -1;
+            for (var i = 0; i < size ; i++)
+            {
+                var tile = tileProps[i, j];
+                if (tile.Team == Team.None)
+                {
+                    lastFreeIndex = i;
+                } else if (tile.State == TileState.Upgraded && lastFreeIndex != -1)
+                {
+                    for (var x = lastFreeIndex; x < i ; x++)
+                    {
+                        var currTile = tileProps[x, j];
+                        var adjacentTile = tileProps[x + 1, j];
+
+                        currTile.Team = adjacentTile.Team;
+                        currTile.State = adjacentTile.State;
+                    }
+
+                    tile.Team = Team.None;
+                    tile.State = TileState.Base;
+                    lastFreeIndex = i;
+                }
+            }
+        }
+
+        return tileProps;
+    }
+
+    private static TileProp[,] ShiftDown(TileProp[,] tileProps)
+    {
+        var size = GameManager.Instance.board.size;
+        // Column movement down
+        for (var j = 0; j < size; j++)
+        {
+            var lastFreeIndex = -1;
+            for (var i = size - 1; i >= 0 ; i--)
+            {
+                var tile = tileProps[i, j];
+                if (tile.Team == Team.None)
+                {
+                    lastFreeIndex = i;
+                } else if (tile.State == TileState.Upgraded && lastFreeIndex != -1)
+                {
+                    for (var x = lastFreeIndex; x > i ; x--)
+                    {
+                        var currTile = tileProps[x, j];
+                        var adjacentTile = tileProps[x - 1, j];
+
+                        currTile.Team = adjacentTile.Team;
+                        currTile.State = adjacentTile.State;
+                    }
+
+                    tile.Team = Team.None;
+                    tile.State = TileState.Base;
+                    lastFreeIndex = i;
+                }
+            }
+        }
+
+        return tileProps;
+    }
+
+    private static TileProp[,] ShiftLeft(TileProp[,] tileProps)
+    {
+        var size = GameManager.Instance.board.size;
+        // Row movement left
+        for (var i = 0; i < size; i++)
+        {
+            var lastFreeIndex = -1;
+            for (var j = 0; j < size ; j++)
+            {
+                var tile = tileProps[i, j];
+                if (tile.Team == Team.None)
+                {
+                    lastFreeIndex = j;
+                } else if (tile.State == TileState.Upgraded && lastFreeIndex != -1)
+                {
+                    for (var x = lastFreeIndex; x < j; x++)
+                    {
+                        var currTile = tileProps[i, x];
+                        var adjacentTile = tileProps[i, x + 1];
+
+                        currTile.Team = adjacentTile.Team;
+                        currTile.State = adjacentTile.State;
+                    }
+
+                    tile.Team = Team.None;
+                    tile.State = TileState.Base;
+                    lastFreeIndex = j;
+                }
+            }
+        }
+
+        return tileProps;
+    }
+
+    private static TileProp[,] ShiftRight(TileProp[,] tileProps)
+    {
+        var size = GameManager.Instance.board.size;
+        for (var i = 0; i < size; i++)
+        {
+            var lastFreeIndex = -1;
+            for (var j = size - 1; j >= 0 ; j--)
+            {
+                var tileComponent = tileProps[i, j];
+                if (tileComponent.Team == Team.None)
+                {
+                    lastFreeIndex = j;
+                } else if (tileComponent.State == TileState.Upgraded && lastFreeIndex != -1)
+                {
+                    for (var x = lastFreeIndex; x > j; x--)
+                    {
+                        var currTile = tileProps[i, x];
+                        var adjacentTile = tileProps[i, x - 1];
+
+                        currTile.Team = adjacentTile.Team;
+                        currTile.State = adjacentTile.State;
+                    }
+
+                    tileComponent.Team = Team.None;
+                    tileComponent.State = TileState.Base;
+                    lastFreeIndex = j;
+                }
+            }
+        }
+
+        return tileProps;
+    }
+
+    public void RefreshTiles()
+    {
+        // C# iterates through all elements of 2d array in a foreach loop
+        foreach (var tile in tiles)
+        {
+            tile.GetComponent<BoardTile>().RefreshSprite();
+        }
+    }
 }

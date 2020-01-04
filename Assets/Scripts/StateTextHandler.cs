@@ -18,7 +18,7 @@ public class StateTextHandler : MonoBehaviour
         cpuCounter.GetComponent<Text>().text = "0";
     }
 
-    public void AdjustState()
+    public void AdjustStateAndPoints()
     {
         phaseText.text = GameManager.Instance.gameState == GameState.Placement ? PlacementText : MovementText;
     }

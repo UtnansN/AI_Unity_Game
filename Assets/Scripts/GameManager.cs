@@ -3,16 +3,9 @@ using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-
 public class GameManager : MonoBehaviour
 {
-    private static GameManager _instance;
-    public static GameManager Instance
-    {
-        get => _instance;
-        private set => _instance = value;
-    }
+    public static GameManager Instance { get; private set; }
 
     public Board board;
     public StateTextHandler stateTextHandler;
@@ -25,7 +18,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        _instance = this;
+        Instance = this;
         ResetGame();
     }
 
@@ -44,13 +37,15 @@ public class GameManager : MonoBehaviour
         if (isHuman)
         {
             aiPlayer.Notify(x, y);
-            SetPhase(GameState.Movement);
         }
+        SetPhase(GameState.Movement);
     }
 
     public void PerformMovement(MovementDirection direction, bool isHuman)
     {
-        board.ShiftTiles(direction);
+        var tileProp = board.ToTileProp();
+        board.ApplyTileProp(Board.ShiftTiles(direction, tileProp));
+        board.RefreshTiles();
         if (isHuman)
         {
             aiPlayer.Notify(direction);
@@ -60,19 +55,18 @@ public class GameManager : MonoBehaviour
 
     private void SetPhase(GameState state)
     {
-        if (state == GameState.Movement)
+        gameState = state;
+        if (gameState == GameState.Movement)
         {
-            gameState = GameState.Movement;
             board.DisableTiles();
             shiftButtonHandler.EnableMoveButtons();
         }
         else
         {
-            gameState = GameState.Placement;
             board.EnableClickableTiles();
             shiftButtonHandler.DisableMoveButtons();
         }
-        stateTextHandler.AdjustState();
+        stateTextHandler.AdjustStateAndPoints();
     }
     
     public static Tuple<int, int> EvaluateScores(BoardTile[,] tiles)

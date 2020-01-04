@@ -26,4 +26,10 @@ namespace DefaultNamespace
         Placement,
         Movement
     }
+
+    public enum Role
+    {
+        Maximizer,
+        Minimizer
+    }
 }

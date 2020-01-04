@@ -693,7 +693,7 @@ PrefabInstance:
     - target: {fileID: 3720236510881245011, guid: 02c3b86c7e4409fecbccc182d566af52,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3720236510881245011, guid: 02c3b86c7e4409fecbccc182d566af52,
         type: 3}
@@ -713,6 +713,11 @@ PrefabInstance:
     - target: {fileID: 3720236510881245011, guid: 02c3b86c7e4409fecbccc182d566af52,
         type: 3}
       propertyPath: m_Interactable
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3720236510881245011, guid: 02c3b86c7e4409fecbccc182d566af52,
+        type: 3}
+      propertyPath: m_Colors.m_DisabledColor.a
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -965,7 +970,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 752037624}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 858764563b5f7476aa465a309d9dce56, type: 3}
+  m_Script: {fileID: 11500000, guid: 35d4156983dad6ad8aa5b0d163a09fe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &769916040
@@ -2040,9 +2045,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   board: {fileID: 374321973}
   stateTextHandler: {fileID: 847501569}
+  shiftButtonHandler: {fileID: 752037627}
   humanToggle: {fileID: 593527863}
   aiPlayer: {fileID: 739873770}
-  gameGameState: 0
+  gameState: 0
 --- !u!4 &1700284576
 Transform:
   m_ObjectHideFlags: 0
@@ -2940,11 +2946,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 374321973}
+      objectReference: {fileID: 1700284575}
     - target: {fileID: 3720236510881245011, guid: 02c3b86c7e4409fecbccc182d566af52,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: InitBoard
+      value: ResetGame
       objectReference: {fileID: 0}
     - target: {fileID: 3720236510881245011, guid: 02c3b86c7e4409fecbccc182d566af52,
         type: 3}

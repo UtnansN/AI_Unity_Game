@@ -1,11 +1,10 @@
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace DefaultNamespace
 {
-    
+
     public class BoardTile : MonoBehaviour
     {
         private static Sprite _defaultSprite;
@@ -13,7 +12,6 @@ namespace DefaultNamespace
         private static Sprite _playerUpgSprite;
         private static Sprite _compBaseSprite;
         private static Sprite _compUpgSprite;
-        
         
         [HideInInspector]
         public Team team = Team.None;
@@ -62,6 +60,38 @@ namespace DefaultNamespace
                 }
             }
             
+        }
+
+        public void RefreshSprite()
+        {
+            var image = GetComponent<Image>();
+            Sprite settableSprite;
+
+            switch (team)
+            {
+                case Team.None:
+                    settableSprite = _defaultSprite;
+                    break;
+                case Team.Human when tileState == TileState.Base:
+                    settableSprite = _playerBaseSprite;
+                    break;
+                case Team.Human when tileState == TileState.Upgraded:
+                    settableSprite = _playerUpgSprite;
+                    break;
+                case Team.Cpu when tileState == TileState.Base:
+                    settableSprite = _compBaseSprite;
+                    break;
+                case Team.Cpu when tileState == TileState.Upgraded:
+                    settableSprite = _compUpgSprite;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            } 
+            
+            if (image.sprite != settableSprite)
+            {
+                image.sprite = settableSprite;
+            }
         }
         
     }
