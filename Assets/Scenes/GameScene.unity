@@ -876,6 +876,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9602db907075b8408a8e87eb7c81e5e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  treeDepth: 5
+  role: 0
 --- !u!4 &739873771
 Transform:
   m_ObjectHideFlags: 0
@@ -2687,6 +2689,11 @@ PrefabInstance:
       propertyPath: m_Padding.m_Bottom
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3692127682609477385, guid: ed6e4fb0e6d8d2e999e581eb3141ca7a,
+        type: 3}
+      propertyPath: m_ConstraintCount
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 3692127682609477386, guid: ed6e4fb0e6d8d2e999e581eb3141ca7a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2796,6 +2803,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Board
+      objectReference: {fileID: 0}
+    - target: {fileID: 3692127682609477390, guid: ed6e4fb0e6d8d2e999e581eb3141ca7a,
+        type: 3}
+      propertyPath: size
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ed6e4fb0e6d8d2e999e581eb3141ca7a, type: 3}

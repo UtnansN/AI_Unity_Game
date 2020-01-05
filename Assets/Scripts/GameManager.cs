@@ -32,12 +32,10 @@ public class GameManager : MonoBehaviour
 
     public void PerformPlacement(int x, int y, bool isHuman)
     {
-        BoardTile tile = board.FetchTile(x, y);
+        var tile = board.FetchTile(x, y);
         tile.MarkTile(isHuman);
-        if (isHuman)
-        {
-            aiPlayer.Notify(x, y);
-        }
+        if (!isHuman) return;
+        aiPlayer.Notify(x, y);
         SetPhase(GameState.Movement);
     }
 
@@ -46,10 +44,8 @@ public class GameManager : MonoBehaviour
         var tileProp = board.ToTileProp();
         board.ApplyTileProp(Board.ShiftTiles(direction, tileProp));
         board.RefreshTiles();
-        if (isHuman)
-        {
-            aiPlayer.Notify(direction);
-        }
+        if (!isHuman) return;
+        aiPlayer.Notify(direction);
         SetPhase(GameState.Placement);
     }
 

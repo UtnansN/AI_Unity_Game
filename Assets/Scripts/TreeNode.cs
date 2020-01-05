@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using DefaultNamespace;
+using UnityEngine;
 using UnityEngine.WSA;
 
 public class TileProp
@@ -56,11 +57,11 @@ public class TileProp
         return arr;
     }
     
-    protected bool Equals(TileProp other)
+    public bool Equals(TileProp other)
     {
         return Team == other.Team && State == other.State;
     }
-    
+
     public override int GetHashCode()
     {
         unchecked
@@ -78,18 +79,19 @@ public class TreeNode
     
     private GameState _gameState;
     private Role _role;
-    private TreeNode _parent;
-    
-    public TreeNode(GameState state, Role role, TreeNode parent)
+
+    [HideInInspector]
+    public bool isFinalState = false;
+
+
+    public TreeNode(GameState state, Role role)
     {
         _gameState = state;
         _role = role;
-        _parent = parent;
     }
 
     public void GenerateChildren(int layers)
     {
-
         var nextRole = _role == Role.Minimizer ? Role.Maximizer : Role.Minimizer;
         var gameLength = Tiles.GetLength(0);
 
@@ -110,7 +112,7 @@ public class TreeNode
                     if (currentTile.Team != Team.None &&
                         (currentTile.Team != team || currentTile.State != TileState.Base)) continue;
                     
-                    var newNode = new TreeNode(nextState, nextRole, this);
+                    var newNode = new TreeNode(nextState, nextRole);
 
                     var changedTile = new TileProp(currentTile.Team == Team.None ? team : currentTile.Team, 
                         currentTile.State == TileState.Base ? currentTile.Team == Team.None ? TileState.Base : TileState.Upgraded : TileState.Base);
@@ -118,7 +120,18 @@ public class TreeNode
                     var newTiles = TileProp.CloneArray(Tiles);
                     newTiles[i, j] = changedTile;
 
-                    newNode.Tiles = newTiles;
+                    var currLayer = CpuPlayer.Instance.treeDepth - layers;
+                    var existingGameState = ReturnIfExistsEqualNode(newTiles, currLayer);
+                    if (existingGameState != null)
+                    {
+                        newNode = existingGameState;
+                    }
+                    else
+                    {
+                        newNode.Tiles = newTiles;
+                        CpuPlayer.Instance.layers[currLayer].Add(newNode);
+                    }
+                    
                     Children.Add(i + " " + j, newNode);
                 }
             }
@@ -130,20 +143,70 @@ public class TreeNode
             // Generate movement children
             foreach (var direction in Enum.GetValues(typeof(MovementDirection)).Cast<MovementDirection>())
             {
-                var newNode = new TreeNode(nextState, nextRole, this);
+                var newNode = new TreeNode(nextState, nextRole);
                 var newTiles = TileProp.CloneArray(Tiles);
                 Board.ShiftTiles(direction, newTiles);
 
-                newNode.Tiles = newTiles;
+                var currLayer = CpuPlayer.Instance.treeDepth - layers;
+                var existingGameState = ReturnIfExistsEqualNode(newTiles, currLayer);
+                if (existingGameState != null)
+                {
+                    newNode = existingGameState;
+                }
+                else
+                {
+                    newNode.Tiles = newTiles;
+                    CpuPlayer.Instance.layers[currLayer].Add(newNode);
+                }
+                
                 Children.Add(direction.ToString(), newNode);
             }
         }
 
-        if (layers <= 1) return;
-        
-        foreach (var child in Children.Values)
+        isFinalState = Children.Count == 0;
+    }
+
+    private static TreeNode ReturnIfExistsEqualNode(TileProp[,] comparable, int layerIndex)
+    {
+        TreeNode returnable = null;
+        foreach (var node in CpuPlayer.Instance.layers[layerIndex])
         {
-            child.GenerateChildren(layers - 1);
+            var workTiles = node.Tiles;
+            var equal = true;
+
+            for (var i = 0; i < workTiles.GetLength(0); i++)
+            {
+                for (var j = 0; j < workTiles.GetLength(1); j++)
+                {
+                    if (workTiles[i, j].Equals(comparable[i, j])) continue;
+
+                    equal = false;
+                    break;
+                }
+
+                if (!equal) break;
+            }
+            
+            if (!equal) continue;
+            
+            returnable = node;
+            break;
+        }
+        return returnable;
+    }
+
+    public void UpdateLayers(int layer)
+    {
+        if (layer >= CpuPlayer.Instance.treeDepth) return;
+
+        var currLayer = CpuPlayer.Instance.layers[layer];
+        
+        foreach (var child in Children.Values.Where(child => !currLayer.Contains(child)))
+        {
+            currLayer.Add(child);
+            child.UpdateLayers(layer + 1);
         }
     }
+    
+    
 }

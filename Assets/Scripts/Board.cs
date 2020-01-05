@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class Board : MonoBehaviour
 {
 
-    public int size = 6;
+    public int size = 4;
     public GameObject tilePrefab;
     
     [HideInInspector]
@@ -263,7 +263,6 @@ public class Board : MonoBehaviour
 
     public void RefreshTiles()
     {
-        // C# iterates through all elements of 2d array in a foreach loop
         foreach (var tile in tiles)
         {
             tile.GetComponent<BoardTile>().RefreshSprite();
