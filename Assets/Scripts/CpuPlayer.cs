@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DefaultNamespace;
 using UnityEngine;
@@ -95,7 +96,6 @@ public class CpuPlayer : MonoBehaviour
         }
         
         
-        
         EmptyLayerList();
         _root.UpdateLayers(0);
         foreach (var child in layers[treeDepth - 2]) 
@@ -107,15 +107,46 @@ public class CpuPlayer : MonoBehaviour
     private void DoPlacement()
     {
         // Get best move
-        GameManager.Instance.PerformPlacement(0, 0, false);
-        Navigate(_root.Children[0 + " " + 0]);
+        TreeNode bestNode;
+        (_, bestNode) = _root.AlphaBetaPrune(int.MinValue, int.MaxValue);
+
+        var key = _root.Children.FirstOrDefault(x => x.Value == bestNode).Key;
+        var xy = key.Split(' ');
+        
+        GameManager.Instance.PerformPlacement(int.Parse(xy[0]), int.Parse(xy[1]), false);
+        Navigate(bestNode);
     }
     
     private void DoMovement()
     {
         // Get best move
-        GameManager.Instance.PerformMovement(MovementDirection.Right, false);
-        Navigate(_root.Children["Right"]);
+        TreeNode bestNode;
+        (_, bestNode) = _root.AlphaBetaPrune(int.MinValue, int.MaxValue);
+        
+        var directionKey = _root.Children.FirstOrDefault(x => x.Value == bestNode).Key;
+
+        var direction = MovementDirection.Up;
+        
+        switch (directionKey)
+        {
+            case "Up":
+                direction = MovementDirection.Up;
+                break;
+            case "Down":
+                direction = MovementDirection.Down;
+                break;
+            case "Left":
+                direction = MovementDirection.Left;
+                break;
+            case "Right":
+                direction = MovementDirection.Right;
+                break;
+        }
+        
+        GameManager.Instance.PerformMovement(direction, false);
+        Navigate(bestNode);
     }
+
+    
 
 }

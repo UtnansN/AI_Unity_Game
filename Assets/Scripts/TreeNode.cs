@@ -26,9 +26,9 @@ public class TileProp
     public static TileProp[,] CreateStartArray(int size)
     {
         var arr = new TileProp[size, size];
-        for (int i = 0; i < size; i++)
+        for (var i = 0; i < size; i++)
         {
-            for (int j = 0; j < size; j++)
+            for (var j = 0; j < size; j++)
             {
                 arr[i, j] = new TileProp();
             }
@@ -81,7 +81,7 @@ public class TreeNode
     private Role _role;
 
     [HideInInspector]
-    public bool isFinalState = false;
+    public bool isFinalState;
 
 
     public TreeNode(GameState state, Role role)
@@ -207,6 +207,54 @@ public class TreeNode
             child.UpdateLayers(layer + 1);
         }
     }
-    
-    
+
+    private int EvaluateNode()
+    {
+        var (item1, item2) = GameManager.EvaluateScores(Tiles);
+
+        if (CpuPlayer.Instance.role == Role.Maximizer) return item2 - item1;
+        return item1 - item2;
+    }
+
+    public (int, TreeNode) AlphaBetaPrune(int alphaValue, int betaValue)
+    {
+        if (Children.Count == 0) return (EvaluateNode(), this);
+        int bestValue;
+        TreeNode bestNode = null;
+        
+        if (_role == Role.Maximizer)
+        {
+            bestValue = int.MinValue;
+            foreach (var child in Children.Values)
+            {
+                var result = child.AlphaBetaPrune(alphaValue, betaValue);
+                if (result.Item1 > bestValue)
+                {
+                    bestValue = result.Item1;
+                    bestNode = child;
+                }
+
+                alphaValue = Math.Max(bestValue, alphaValue);
+                if (alphaValue >= betaValue) break;
+            }
+        }
+        else
+        {
+            bestValue = int.MaxValue;
+            foreach (var child in Children.Values)
+            {
+                var result = child.AlphaBetaPrune(alphaValue, betaValue);
+                if (result.Item1 < bestValue)
+                {
+                    bestValue = result.Item1;
+                    bestNode = child;
+                }
+
+                betaValue = Math.Min(bestValue, betaValue);
+                if (alphaValue >= betaValue) break;
+            }
+        }
+        
+        return (bestValue, bestNode);
+    }
 }
