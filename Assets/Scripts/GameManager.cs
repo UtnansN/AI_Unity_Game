@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         stateTextHandler.AdjustStateAndPoints();
     }
     
-    public static Tuple<int, int> EvaluateScores(BoardTile[,] tiles)
+    public static Tuple<int, int> EvaluateScores(TileProp[,] tiles)
     {
         var humanScore = 0;
         var cpuScore = 0;
@@ -75,8 +75,8 @@ public class GameManager : MonoBehaviour
         {
             for (var j = 1; j < tiles.GetLength(1) - 1; j++)
             {
-                var tileTeam = tiles[i, j].team;
-                if (tileTeam == tiles[i, j-1].team && tileTeam == tiles[i, j+1].team)
+                var tileTeam = tiles[i, j].Team;
+                if (tileTeam == tiles[i, j-1].Team && tileTeam == tiles[i, j+1].Team)
                 {
                     switch (tileTeam)
                     {
@@ -100,8 +100,8 @@ public class GameManager : MonoBehaviour
         {
             for (var i = 1; i < tiles.GetLength(0) - 1; i++)
             {
-                var tileTeam = tiles[i, j].team;
-                if (tileTeam == tiles[i-1, j].team && tileTeam == tiles[i+1, j].team)
+                var tileTeam = tiles[i, j].Team;
+                if (tileTeam == tiles[i-1, j].Team && tileTeam == tiles[i+1, j].Team)
                 {
                     switch (tileTeam)
                     {

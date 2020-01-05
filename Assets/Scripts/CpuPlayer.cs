@@ -94,6 +94,8 @@ public class CpuPlayer : MonoBehaviour
             return;
         }
         
+        
+        
         EmptyLayerList();
         _root.UpdateLayers(0);
         foreach (var child in layers[treeDepth - 2]) 

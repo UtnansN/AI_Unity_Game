@@ -14,13 +14,17 @@ public class StateTextHandler : MonoBehaviour
     
     public void SetDefaultPoints()
     {
-        humanCounter.GetComponent<Text>().text = "0";
-        cpuCounter.GetComponent<Text>().text = "0";
+        humanCounter.text = "0";
+        cpuCounter.text = "0";
     }
 
     public void AdjustStateAndPoints()
     {
         phaseText.text = GameManager.Instance.gameState == GameState.Placement ? PlacementText : MovementText;
+        var points = GameManager.EvaluateScores(GameManager.Instance.board.ToTileProp());
+
+        humanCounter.text = points.Item1.ToString();
+        cpuCounter.text = points.Item2.ToString();
     }
 
 }
