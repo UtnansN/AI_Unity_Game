@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -12,7 +13,7 @@ public class Board : MonoBehaviour
     
     [HideInInspector]
     public GameObject[,] tiles;
-
+    
     public void InitBoard()
     {
         if (tiles != null)
@@ -26,10 +27,9 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < size; j++)
             {
-                GameObject gameTile = Instantiate(tilePrefab, transform);
+                var gameTile = Instantiate(tilePrefab, transform);
 
-
-                BoardTile tileComponent = gameTile.GetComponent<BoardTile>();
+                var tileComponent = gameTile.GetComponent<BoardTile>();
                 tileComponent.row = i;
                 tileComponent.column = j;
                 
@@ -68,7 +68,7 @@ public class Board : MonoBehaviour
             for (int j = 0; j < size; j++)
             {
                 var boardTile = tiles[i, j].GetComponent<BoardTile>();
-                if ((boardTile.team == Team.Human && boardTile.tileState == TileState.Base) || boardTile.team == Team.None)
+                if (boardTile.team == Team.None)
                 {
                     tiles[i, j].GetComponent<Button>().enabled = true;
                 }
@@ -89,7 +89,6 @@ public class Board : MonoBehaviour
             {
                 var current = FetchTile(i, j);
                 current.team = tileProps[i, j].Team;
-                current.tileState = tileProps[i, j].State;
             }
         }
     }
@@ -103,7 +102,7 @@ public class Board : MonoBehaviour
             for (var j = 0; j < boardSize; j++)
             {
                 var boardTile = tiles[i, j].GetComponent<BoardTile>();
-                tileProps[i, j] = new TileProp(boardTile.team, boardTile.tileState);
+                tileProps[i, j] = new TileProp(boardTile.team);
             }
         }
         return tileProps;
@@ -139,7 +138,7 @@ public class Board : MonoBehaviour
                 if (tile.Team == Team.None)
                 {
                     lastFreeIndex = i;
-                } else if (tile.State == TileState.Upgraded && lastFreeIndex != -1)
+                } else if (lastFreeIndex != -1)
                 {
                     for (var x = lastFreeIndex; x < i ; x++)
                     {
@@ -147,11 +146,9 @@ public class Board : MonoBehaviour
                         var adjacentTile = tileProps[x + 1, j];
 
                         currTile.Team = adjacentTile.Team;
-                        currTile.State = adjacentTile.State;
                     }
 
                     tile.Team = Team.None;
-                    tile.State = TileState.Base;
                     lastFreeIndex = i;
                 }
             }
@@ -173,7 +170,7 @@ public class Board : MonoBehaviour
                 if (tile.Team == Team.None)
                 {
                     lastFreeIndex = i;
-                } else if (tile.State == TileState.Upgraded && lastFreeIndex != -1)
+                } else if (lastFreeIndex != -1)
                 {
                     for (var x = lastFreeIndex; x > i ; x--)
                     {
@@ -181,11 +178,9 @@ public class Board : MonoBehaviour
                         var adjacentTile = tileProps[x - 1, j];
 
                         currTile.Team = adjacentTile.Team;
-                        currTile.State = adjacentTile.State;
                     }
 
                     tile.Team = Team.None;
-                    tile.State = TileState.Base;
                     lastFreeIndex = i;
                 }
             }
@@ -207,7 +202,7 @@ public class Board : MonoBehaviour
                 if (tile.Team == Team.None)
                 {
                     lastFreeIndex = j;
-                } else if (tile.State == TileState.Upgraded && lastFreeIndex != -1)
+                } else if (lastFreeIndex != -1)
                 {
                     for (var x = lastFreeIndex; x < j; x++)
                     {
@@ -215,11 +210,9 @@ public class Board : MonoBehaviour
                         var adjacentTile = tileProps[i, x + 1];
 
                         currTile.Team = adjacentTile.Team;
-                        currTile.State = adjacentTile.State;
                     }
 
                     tile.Team = Team.None;
-                    tile.State = TileState.Base;
                     lastFreeIndex = j;
                 }
             }
@@ -240,7 +233,7 @@ public class Board : MonoBehaviour
                 if (tileComponent.Team == Team.None)
                 {
                     lastFreeIndex = j;
-                } else if (tileComponent.State == TileState.Upgraded && lastFreeIndex != -1)
+                } else if (lastFreeIndex != -1)
                 {
                     for (var x = lastFreeIndex; x > j; x--)
                     {
@@ -248,11 +241,9 @@ public class Board : MonoBehaviour
                         var adjacentTile = tileProps[i, x - 1];
 
                         currTile.Team = adjacentTile.Team;
-                        currTile.State = adjacentTile.State;
                     }
 
                     tileComponent.Team = Team.None;
-                    tileComponent.State = TileState.Base;
                     lastFreeIndex = j;
                 }
             }

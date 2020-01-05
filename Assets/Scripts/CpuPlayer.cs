@@ -38,9 +38,9 @@ public class CpuPlayer : MonoBehaviour
 
         _root = new TreeNode(GameState.Placement, Role.Maximizer)
         {
-            Tiles = TileProp.CreateStartArray(GameManager.Instance.board.size)
+            Tiles = GameManager.Instance.board.ToTileProp()
         };
-
+        
         _root.GenerateChildren(treeDepth);
         for (var i = 0; i < treeDepth - 1; i++)
         {

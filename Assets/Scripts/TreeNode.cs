@@ -9,36 +9,20 @@ using UnityEngine.WSA;
 public class TileProp
 {
     public Team Team;
-    public TileState State;
 
     public TileProp()
     {
         Team = Team.None;
-        State = TileState.Base;
     }
 
-    public TileProp(Team team, TileState state)
+    public TileProp(Team team)
     {
         Team = team;
-        State = state;
-    }
-
-    public static TileProp[,] CreateStartArray(int size)
-    {
-        var arr = new TileProp[size, size];
-        for (var i = 0; i < size; i++)
-        {
-            for (var j = 0; j < size; j++)
-            {
-                arr[i, j] = new TileProp();
-            }
-        }
-        return arr;
     }
 
     public TileProp Clone()
     {
-        return new TileProp(Team, State);    
+        return new TileProp(Team);    
     }
 
     public static TileProp[,] CloneArray(TileProp[,] other)
@@ -59,14 +43,14 @@ public class TileProp
     
     public bool Equals(TileProp other)
     {
-        return Team == other.Team && State == other.State;
+        return Team == other.Team;
     }
 
     public override int GetHashCode()
     {
         unchecked
         {
-            return ((int) Team * 397) ^ (int) State;
+            return ((int) Team * 397);
         }
     }
     
@@ -109,13 +93,11 @@ public class TreeNode
                     var currentTile = Tiles[i, j];
                     
                     // Checks if tile is valid for branching
-                    if (currentTile.Team != Team.None &&
-                        (currentTile.Team != team || currentTile.State != TileState.Base)) continue;
+                    if (currentTile.Team != Team.None) continue;
                     
                     var newNode = new TreeNode(nextState, nextRole);
 
-                    var changedTile = new TileProp(currentTile.Team == Team.None ? team : currentTile.Team, 
-                        currentTile.State == TileState.Base ? currentTile.Team == Team.None ? TileState.Base : TileState.Upgraded : TileState.Base);
+                    var changedTile = new TileProp(currentTile.Team == Team.None ? team : currentTile.Team);
 
                     var newTiles = TileProp.CloneArray(Tiles);
                     newTiles[i, j] = changedTile;

@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
 
     [HideInInspector]
     public GameState gameState = GameState.Placement;
+    
 
     void Start()
     {
